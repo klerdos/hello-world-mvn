@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                mvn package
+                sh 'mvn package'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
@@ -23,7 +23,7 @@ pipeline {
                   }
                 }
                 steps {
-                  java -jar target/*.jar
+                  sh 'java -jar target/*.jar'
                 }
             }
         }
