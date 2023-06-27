@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'maven-nodejs' }
+    agent { label 'builtin' }
 
     stages {
         stage('Build') {
@@ -12,19 +12,6 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
-            }
-        }
-        stage('Run') {
-            steps {
-                echo 'Running....'
-                when {
-                  expression {
-                    currentBuild.result == null || currentBuild.result == 'SUCCESS' 
-                  }
-                }
-                steps {
-                  sh 'java -jar target/*.jar'
-                }
             }
         }
     }
