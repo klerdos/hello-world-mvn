@@ -1,0 +1,65 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Workflow
+metadata:
+  name: mvn-app
+spec:
+  entrypoint: mvn-app
+  volumeClaimTemplates:
+  - metadata:
+      name: workspace
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 1Gi
+  templates:
+  - name: mvn-app
+    steps:
+    - - name: git-clone
+        template: git-clone
+    - - name: mvn-test
+        template: mvn-test
+      - name: mvn-build
+        template: mvn-build
+  - name: git-clone
+    inputs:
+      artifacts:
+      - name: app-source
+        path: /workspace/git
+        git:
+          repo: https://github.com/klerdos/hello-world-mvn.git
+          revision: "main"
+    archiveLocation:
+      archiveLogs: true
+    container:
+      volumeMounts:
+      - mountPath: /workspace
+        name: workspace
+      command: [sh, -c]
+      args: ["ls -la /workspace/git/"]
+      image: golang
+      workingDir: /workspace
+  - name: mvn-test
+    archiveLocation:
+      archiveLogs: true
+    container:
+      volumeMounts:
+      - mountPath: /workspace
+        name: workspace
+      image: maven:3.6.3-jdk-11
+      command: [sh, -c]
+      args: ["pwd && ls -la && mvn test"]
+      workingDir: /workspace/git
+  - name: mvn-build
+    archiveLocation:
+      archiveLogs: true
+    container:
+      command: [sh, -c]
+      args: ["pwd && ls -la && mvn clean install"]
+      volumeMounts:
+      - mountPath: /workspace
+        name: workspace
+      image: maven:3.6.3-jdk-11
+      workingDir: /workspace/git
+
+
