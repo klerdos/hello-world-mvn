@@ -1,9 +1,11 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Workflow
 metadata:
-  name: mvn-app
+  generateName: mvn-app-workflow-
 spec:
   entrypoint: mvn-app
+  podGC:
+    strategy: OnWorkflowCompletion
   volumeClaimTemplates:
   - metadata:
       name: workspace
