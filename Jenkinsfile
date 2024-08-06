@@ -1,23 +1,27 @@
 node('builtin') {
-    stage('git clone') {
-        checkout scm
-    }
-    stage('Validate') {
-        echo 'Validate..'
-        withMaven (maven: '3.9.8'){
-          sh 'mvn compile'
+    try {
+        stage('git clone') {
+            checkout scm
         }
-    }
-    stage('Build') {
-        echo 'Building..'
-        withMaven (maven: '3.9.8'){
-          sh 'mvn build'
+        stage('Validate') {
+            echo 'Validate..'
+            withMaven (maven: 'maven-3.9.8'){
+              sh 'mvn compile'
+            }
         }
-    }
-    stage('Test') {
-        echo 'Testing..'
-        withMaven (maven: '3.9.8'){
-            sh 'mvn test'
+        stage('Build') {
+            echo 'Building..'
+            withMaven (maven: 'maven-3.9.8'){
+              sh 'mvn build'
+            }
         }
+        stage('Test') {
+            echo 'Testing..'
+            withMaven (maven: 'maven-3.9.8'){
+                sh 'mvn test'
+            }
+        }
+    } finally {
+        cleanWs()
     }
 }
