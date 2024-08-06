@@ -12,7 +12,7 @@ node('builtin') {
         stage('Build') {
             echo 'Building..'
             withMaven (maven: 'maven-3.9.8'){
-              sh 'mvn build'
+              sh 'mvn verify'
             }
         }
         stage('Test') {
@@ -22,6 +22,5 @@ node('builtin') {
             }
         }
     } finally {
-        cleanWs()
     }
 }
