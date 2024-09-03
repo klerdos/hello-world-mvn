@@ -1,4 +1,4 @@
-node('builtin') {
+node {
     try {
         stage('git clone') {
             checkout scm
