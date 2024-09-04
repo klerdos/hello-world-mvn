@@ -1,4 +1,4 @@
-node {
+node ("jenkins-jenkins-agent") {
     try {
         stage('git clone') {
             checkout scm
