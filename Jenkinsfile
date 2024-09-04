@@ -3,7 +3,7 @@ node ("jenkins-jenkins-agent") {
     env.AWS_ACCESS_KEY_ID = 'O25lWE1zlT3AhRuWQqWU'
     env.AWS_SECRET_ACCESS_KEY = 'SBbroI8BMe7HGCrefT6WcCVjXAk1TrFN4ZEYKKfy'
     env.MINIO_ENDPOINT = 'http://minio.minio:9000'  // Endpoint MinIO serveru
-    env.S3_BUCKET = 'SBbroI8BMe7HGCrefT6WcCVjXAk1TrFN4ZEYKKfy'
+    env.S3_BUCKET = 'hello-world-mvn-bucket'
 
     try {
         stage('git clone') {
