@@ -40,7 +40,8 @@ node ("jenkins-jenkins-agent") {
         }
         stage('Upload cache') {
             sh 'tar -czvf cache.tar.gz -C ~/.m2/repository .'
-            withEnv(["AWS_S3_ENDPOINT=${env.MINIO_ENDPOINT}"]) {
+            // Nastavení environmentální proměnné pro custom endpoint
+            withAws(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
                 s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}")
             }
         }
