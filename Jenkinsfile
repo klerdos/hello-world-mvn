@@ -9,16 +9,17 @@ node ("jenkins-jenkins-agent") {
         stage('git clone') {
             checkout scm
         }
-        try {
-            stage('download cache') {
-                // Nastavení environmentální proměnné pro custom endpoint
-                withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
+        
+        stage('download cache') {
+            // Nastavení environmentální proměnné pro custom endpoint
+            withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
+                if (s3DoesObjectExist(bucket: env.S3_BUCKET, path:'cache.tar.gz')) {
                     s3Download(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path: 'cache.tar.gz')
                     sh 'tar -xzvf cache.tar.gz -C ~/.m2/repository'
-                }
+                } else {
+                    echo "no cache found. continuing without cache"
+                }        
             }
-        } catch (e) {
-            echo "no cache found. continuing without cache"
         }
         stage('Validate') {
             echo 'Validate..'
