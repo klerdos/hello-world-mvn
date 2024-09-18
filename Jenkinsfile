@@ -9,13 +9,13 @@ node ("jenkins-jenkins-agent") {
         stage('git clone') {
             checkout scm
         }
-        stage('download cache') {
-            // Nastavení environmentální proměnné pro custom endpoint
-            withEnv(["AWS_S3_ENDPOINT=${env.MINIO_ENDPOINT}"]) {
-                s3Download(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path: 'cache.tar.gz')
-                sh 'tar -xzvf cache.tar.gz -C ~/.m2/repository'
-            }
-        }
+        // stage('download cache') {
+        //     // Nastavení environmentální proměnné pro custom endpoint
+        //     withEnv(["AWS_S3_ENDPOINT=${env.MINIO_ENDPOINT}"]) {
+        //         s3Download(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path: 'cache.tar.gz')
+        //         sh 'tar -xzvf cache.tar.gz -C ~/.m2/repository'
+        //     }
+        // }
         stage('Validate') {
             echo 'Validate..'
             withMaven (maven: 'maven-3.9.8'){
@@ -34,12 +34,12 @@ node ("jenkins-jenkins-agent") {
                 sh 'mvn test'
             }
         }
-        stage('Upload cache') {
-            sh 'tar -czvf cache.tar.gz -C ~/.m2/repository .'
-            withEnv(["AWS_S3_ENDPOINT=${env.MINIO_ENDPOINT}"]) {
-                s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}")
-            }
-        }
+        // stage('Upload cache') {
+        //     sh 'tar -czvf cache.tar.gz -C ~/.m2/repository .'
+        //     withEnv(["AWS_S3_ENDPOINT=${env.MINIO_ENDPOINT}"]) {
+        //         s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}")
+        //     }
+        // }
     } finally {
     }
 }
