@@ -4,6 +4,7 @@ node ("jenkins-jenkins-agent") {
     // env.AWS_SECRET_ACCESS_KEY = 'SBbroI8BMe7HGCrefT6WcCVjXAk1TrFN4ZEYKKfy'
     // env.MINIO_ENDPOINT = 'http://minio.minio:9000'  // Endpoint MinIO serveru
     env.S3_BUCKET = 'hello-world-mvn-bucket'
+    env.S3_URL = 'http://minio:9000'
 
     try {
         stage('git clone') {
@@ -12,7 +13,7 @@ node ("jenkins-jenkins-agent") {
         
         stage('download cache') {
             // Nastavení environmentální proměnné pro custom endpoint
-            withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
+            withAWS(endpointUrl:env.S3_URL,credentials:'minio-cred') {
                 if (s3DoesObjectExist(bucket: env.S3_BUCKET, path:'cache.tar.gz')) {
                     s3Download(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path: 'cache.tar.gz')
                     sh 'tar -xzvf cache.tar.gz -C ~/.m2/repository'
@@ -42,8 +43,8 @@ node ("jenkins-jenkins-agent") {
         stage('Upload cache') {
             sh 'tar -czvf cache.tar.gz -C ~/.m2/repository .'
             // Nastavení environmentální proměnné pro custom endpoint
-            withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
-                s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}")
+            withAWS(endpointUrl:env.S3_URL,credentials:'minio-cred') {
+                s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path:'cache.tar.gz')
             }
         }
     } finally {
