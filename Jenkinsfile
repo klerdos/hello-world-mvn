@@ -12,7 +12,7 @@ node ("jenkins-jenkins-agent") {
         try {
             stage('download cache') {
                 // Nastavení environmentální proměnné pro custom endpoint
-                withAws(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
+                withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
                     s3Download(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}", path: 'cache.tar.gz')
                     sh 'tar -xzvf cache.tar.gz -C ~/.m2/repository'
                 }
@@ -41,7 +41,7 @@ node ("jenkins-jenkins-agent") {
         stage('Upload cache') {
             sh 'tar -czvf cache.tar.gz -C ~/.m2/repository .'
             // Nastavení environmentální proměnné pro custom endpoint
-            withAws(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
+            withAWS(endpointUrl:'http://minio.minio:9000',credentials:'minio-cred') {
                 s3Upload(file: 'cache.tar.gz', bucket: "${env.S3_BUCKET}")
             }
         }
